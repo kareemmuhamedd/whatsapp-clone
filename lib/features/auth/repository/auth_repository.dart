@@ -11,14 +11,15 @@ import 'package:whatsapp_clone/features/auth/screens/otp_screen.dart';
 import 'package:whatsapp_clone/features/auth/screens/user_information_screen.dart';
 import 'package:whatsapp_clone/models/user_model.dart';
 
-
 import '../../../screens/mobile_layout_screen.dart';
 
 final authRepositoryProvider = Provider(
-  (ref) => AuthRepository(
-    auth: FirebaseAuth.instance,
-    firestore: FirebaseFirestore.instance,
-  ),
+  (ref) {
+    return AuthRepository(
+      auth: FirebaseAuth.instance,
+      firestore: FirebaseFirestore.instance,
+    );
+  },
 );
 
 class AuthRepository {
@@ -29,6 +30,16 @@ class AuthRepository {
     required this.auth,
     required this.firestore,
   });
+
+  Future<UserModel?> getCurrentUserData() async {
+    var userData =
+        await firestore.collection('users').doc(auth.currentUser?.uid).get();
+    UserModel? user;
+    if (userData.data() != null) {
+      user = UserModel.fromJson(userData.data()!);
+    }
+    return user;
+  }
 
   void signInWithPhone(
       {required BuildContext context, required String phoneNumber}) async {
