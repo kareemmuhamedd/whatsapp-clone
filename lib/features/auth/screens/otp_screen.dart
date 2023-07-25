@@ -30,7 +30,6 @@ class OTPScreen extends ConsumerWidget {
       ),
       body: Center(
         child: Column(
-          //crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 20),
             const Text('We have sent an SMS with a code.'),
