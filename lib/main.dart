@@ -40,7 +40,7 @@ class MyApp extends ConsumerWidget {
           error: error.toString(),
         );
       }, loading: () {
-        return const LoaderScreen();
+        return const Loader();
       }),
     );
   }

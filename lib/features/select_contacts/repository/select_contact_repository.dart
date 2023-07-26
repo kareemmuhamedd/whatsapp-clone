@@ -39,14 +39,25 @@ class SelectContactRepository {
             selectedContact.phones[0].number.replaceAll(' ', '');
         if (selectedPhoneNum == userData.phoneNumber) {
           isFound = true;
-          Navigator.pushNamed(context, MobileChatScreen.routeName);
+          if (context.mounted) {
+            Navigator.pushNamed(
+              context,
+              MobileChatScreen.routeName,
+              arguments: {
+                'name': userData.name,
+                'uid': userData.uid,
+              },
+            );
+          }
         }
       }
       if (!isFound) {
-        showSnackBar(
-          context: context,
-          content: 'This number is not exist on the app.',
-        );
+        if (context.mounted) {
+          showSnackBar(
+            context: context,
+            content: 'This number is not exist on the app.',
+          );
+        }
       }
     } catch (e) {
       showSnackBar(context: context, content: e.toString());

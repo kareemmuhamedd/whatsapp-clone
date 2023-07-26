@@ -75,11 +75,13 @@ class AuthRepository {
         smsCode: userOTP,
       );
       await auth.signInWithCredential(credential);
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        UserInformationScreen.routeName,
-        (route) => false,
-      );
+      if (context.mounted) {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          UserInformationScreen.routeName,
+          (route) => false,
+        );
+      }
     } on FirebaseAuthException catch (e) {
       print('i found error when i try to verify your OTP SMS');
       showSnackBar(context: context, content: e.message!);
@@ -113,14 +115,24 @@ class AuthRepository {
         groupId: [],
       );
       await firestore.collection('users').doc(uid).set(user.toMap());
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MobileLayoutScreen(),
-          ),
-          (route) => false);
+      if (context.mounted) {
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const MobileLayoutScreen(),
+            ),
+            (route) => false);
+      }
     } catch (e) {
       showSnackBar(context: context, content: e.toString());
     }
+  }
+
+  Stream<UserModel> userData(String userId) {
+    return firestore.collection('users').doc(userId).snapshots().map(
+          (event) => UserModel.fromJson(
+            event.data()!,
+          ),
+        );
   }
 }

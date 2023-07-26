@@ -1,21 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:whatsapp_clone/common/widgets/loader.dart';
+import 'package:whatsapp_clone/models/user_model.dart';
 
 import '../colors.dart';
+import '../features/auth/controller/auth_controller.dart';
 import '../info.dart';
 import '../widgets/chat_list.dart';
 
+class MobileChatScreen extends ConsumerWidget {
+  static const routeName = '/mobile-chat-screen';
+  final String name;
+  final String uid;
 
-class MobileChatScreen extends StatelessWidget {
-  static const routeName='/mobile-chat-screen';
-  const MobileChatScreen({Key? key}) : super(key: key);
+  const MobileChatScreen({
+    Key? key,
+    required this.name,
+    required this.uid,
+  }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: appBarColor,
-        title: Text(
-          info[0]['name'].toString(),
+        title: StreamBuilder<UserModel>(
+          stream: ref.read(authControllerProvider).userDataById(uid),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Loader();
+            }
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(name),
+                Text(
+                  snapshot.data!.isOnline ? 'online' : 'offline',
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+              ],
+            );
+          },
         ),
         centerTitle: false,
         actions: [
@@ -35,7 +63,7 @@ class MobileChatScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-           const Expanded(
+          const Expanded(
             child: ChatList(),
           ),
           TextField(
@@ -44,16 +72,28 @@ class MobileChatScreen extends StatelessWidget {
               fillColor: mobileChatBoxColor,
               prefixIcon: const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.0),
-                child: Icon(Icons.emoji_emotions, color: Colors.grey,),
+                child: Icon(
+                  Icons.emoji_emotions,
+                  color: Colors.grey,
+                ),
               ),
               suffixIcon: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: const [
-                    Icon(Icons.camera_alt, color: Colors.grey,),
-                    Icon(Icons.attach_file, color: Colors.grey,),
-                    Icon(Icons.money, color: Colors.grey,),
+                    Icon(
+                      Icons.camera_alt,
+                      color: Colors.grey,
+                    ),
+                    Icon(
+                      Icons.attach_file,
+                      color: Colors.grey,
+                    ),
+                    Icon(
+                      Icons.money,
+                      color: Colors.grey,
+                    ),
                   ],
                 ),
               ),
