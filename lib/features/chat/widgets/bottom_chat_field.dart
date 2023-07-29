@@ -1,18 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:whatsapp_clone/features/chat/controller/chat_controller.dart';
 
 import '../../../colors.dart';
 
-class BottomChatField extends StatefulWidget {
+class BottomChatField extends ConsumerStatefulWidget {
+  final String receiverUserId;
+
   const BottomChatField({
+    required this.receiverUserId,
     super.key,
   });
 
   @override
-  State<BottomChatField> createState() => _BottomChatFieldState();
+  ConsumerState<BottomChatField> createState() => _BottomChatFieldState();
 }
 
-class _BottomChatFieldState extends State<BottomChatField> {
+class _BottomChatFieldState extends ConsumerState<BottomChatField> {
   bool isShowSendButton = false;
+  final TextEditingController _messageController = TextEditingController();
+
+  void sendTextMessage() async {
+    if (isShowSendButton) {
+      // i don't need trim here !!!!!!
+      ref.read(chatControllerProvider).sendTextMessage(
+            context,
+            _messageController.text.trim(),
+            widget.receiverUserId,
+          );
+      _messageController.clear();
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _messageController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,13 +47,13 @@ class _BottomChatFieldState extends State<BottomChatField> {
       children: [
         Expanded(
           child: TextField(
+            controller: _messageController,
             onChanged: (val) {
               if (val.isNotEmpty) {
                 setState(() {
                   isShowSendButton = true;
                 });
-              }
-              else{
+              } else {
                 setState(() {
                   isShowSendButton = false;
                 });
@@ -92,13 +119,16 @@ class _BottomChatFieldState extends State<BottomChatField> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(right: 2, left: 6),
+          padding: const EdgeInsets.only(right: 2, left: 6),
           child: CircleAvatar(
             radius: 23,
-            backgroundColor: Color.fromRGBO(5, 96, 98, 1),
-            child: Icon(
-              isShowSendButton ? Icons.send_rounded : Icons.mic,
-              color: Colors.white,
+            backgroundColor: const Color.fromRGBO(5, 96, 98, 1),
+            child: GestureDetector(
+              onTap: sendTextMessage,
+              child: Icon(
+                isShowSendButton ? Icons.send_rounded : Icons.mic,
+                color: Colors.white,
+              ),
             ),
           ),
         )
