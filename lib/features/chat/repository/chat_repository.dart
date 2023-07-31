@@ -1,5 +1,3 @@
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:whatsapp_clone/common/enums/message_enum.dart';
 import 'package:whatsapp_clone/common/utils/utils.dart';
+import 'package:whatsapp_clone/info.dart';
 import 'package:whatsapp_clone/models/chat_contact.dart';
 import 'package:whatsapp_clone/models/message.dart';
 import 'package:whatsapp_clone/models/user_model.dart';
@@ -25,6 +24,35 @@ class ChatRepository {
     required this.auth,
   });
 
+  Stream<List<ChatContact>> getChatContact() {
+    return firestore
+        .collection('users')
+        .doc(auth.currentUser!.uid)
+        .collection('chats')
+        .snapshots()
+        .asyncMap((event) async {
+      List<ChatContact> contacts = [];
+      for (var document in event.docs) {
+        ChatContact chatContact = ChatContact.fromJson(document.data());
+        var userData = await firestore
+            .collection('users')
+            .doc(chatContact.contactId)
+            .get();
+        UserModel user = UserModel.fromJson(userData.data()!);
+        contacts.add(
+          ChatContact(
+            name: user.name,
+            profilePic: user.profilePic,
+            contactId: chatContact.contactId,
+            timeSent: chatContact.timeSent,
+            lastMessage: chatContact.lastMessage,
+          ),
+        );
+      }
+      return contacts;
+    });
+  }
+
   _saveDataToContactsSubCollection(
     UserModel senderUserData,
     UserModel receiverUserData,
@@ -32,7 +60,6 @@ class ChatRepository {
     DateTime timeSent,
     String receiverUserId,
   ) async {
-    // this will show for me in my phone screen
     var receiverChatContact = ChatContact(
       name: senderUserData.name,
       profilePic: senderUserData.profilePic,
@@ -43,12 +70,12 @@ class ChatRepository {
     await firestore
         .collection('users')
         .doc(receiverUserId)
-        .collection('chat')
+        .collection('chats')
         .doc(auth.currentUser!.uid)
         .set(
           receiverChatContact.toJson(),
         );
-    // this will show for friend in his phone screen
+
     var senderChatContact = ChatContact(
       name: receiverUserData.name,
       profilePic: receiverUserData.profilePic,
@@ -59,7 +86,7 @@ class ChatRepository {
     await firestore
         .collection('users')
         .doc(auth.currentUser!.uid)
-        .collection('chat')
+        .collection('chats')
         .doc(receiverUserId)
         .set(
           senderChatContact.toJson(),

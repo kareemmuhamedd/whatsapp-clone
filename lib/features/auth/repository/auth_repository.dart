@@ -114,7 +114,7 @@ class AuthRepository {
         phoneNumber: auth.currentUser!.phoneNumber.toString(),
         groupId: [],
       );
-      await firestore.collection('users').doc(uid).set(user.toMap());
+      await firestore.collection('users').doc(uid).set(user.toJson());
       if (context.mounted) {
         Navigator.pushAndRemoveUntil(
             context,

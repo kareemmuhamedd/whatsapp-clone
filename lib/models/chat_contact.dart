@@ -1,7 +1,6 @@
 class ChatContact {
   final String name;
   final String profilePic;
-
   final String contactId;
   final DateTime timeSent;
   final String lastMessage;
