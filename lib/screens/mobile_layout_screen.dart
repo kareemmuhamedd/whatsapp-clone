@@ -3,7 +3,7 @@ import 'package:whatsapp_clone/features/select_contacts/screens/select_contact_s
 
 
 import '../colors.dart';
-import '../widgets/contacts_list.dart';
+import '../features/chat/widgets/contacts_list.dart';
 
 class MobileLayoutScreen extends StatelessWidget {
   const MobileLayoutScreen({Key? key}) : super(key: key);

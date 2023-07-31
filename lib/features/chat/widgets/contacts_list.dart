@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:whatsapp_clone/common/widgets/loader.dart';
 import 'package:whatsapp_clone/features/chat/controller/chat_controller.dart';
-import '../colors.dart';
-import '../info.dart';
-import '../features/chat/screens/mobile_chat_screen.dart';
-import '../models/chat_contact.dart';
+import '../../../colors.dart';
+import '../../../info.dart';
+import '../screens/mobile_chat_screen.dart';
+import '../../../models/chat_contact.dart';
 
 class ContactsList extends ConsumerWidget {
   const ContactsList({Key? key}) : super(key: key);
