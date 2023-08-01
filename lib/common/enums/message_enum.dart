@@ -14,7 +14,7 @@ extension ConvertMessage on String {
   MessageEnum toEnum() {
     switch (this) {
       case 'text':
-        return MessageEnum.audio;
+        return MessageEnum.text;
       case 'image':
         return MessageEnum.image;
       case 'audio':

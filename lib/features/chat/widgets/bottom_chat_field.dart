@@ -36,6 +36,9 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
             widget.receiverUserId,
           );
       _messageController.clear();
+      setState(() {
+        isShowSendButton=false;
+      });
     }
   }
 
