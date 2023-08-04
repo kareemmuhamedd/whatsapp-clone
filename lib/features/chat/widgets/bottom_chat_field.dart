@@ -1,15 +1,11 @@
 import 'dart:io';
-
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:enough_giphy/src/models/gif.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:whatsapp_clone/common/enums/message_enum.dart';
 import 'package:whatsapp_clone/common/utils/utils.dart';
 import 'package:whatsapp_clone/features/chat/controller/chat_controller.dart';
-
 import '../../../colors.dart';
 
 class BottomChatField extends ConsumerStatefulWidget {
@@ -58,6 +54,21 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
     File? image = await pickImageFromGallery(context: context);
     if (image != null) {
       sendFileMessage(image, MessageEnum.image);
+    }
+  }
+
+  void sendGIFMessage(GiphyGif gif) {
+    ref.read(chatControllerProvider).sendGIFMessage(
+          context,
+          gif.url,
+          widget.receiverUserId,
+        );
+  }
+
+  void selectGIF() async {
+    final GiphyGif? gif = await pickGIF(context);
+    if (gif != null) {
+      sendGIFMessage(gif);
     }
   }
 
@@ -140,7 +151,7 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
                             ),
                           ),
                           IconButton(
-                            onPressed: () {},
+                            onPressed: selectGIF,
                             icon: const Icon(
                               Icons.gif,
                               color: Colors.grey,

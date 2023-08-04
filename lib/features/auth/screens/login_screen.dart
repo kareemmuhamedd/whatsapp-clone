@@ -42,8 +42,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             context: context,
             phoneNumber: '+${_country!.phoneCode}$phoneNumber',
           );
-    }
-    else{
+    } else {
       showSnackBar(context: context, content: 'Fill out all the fields');
     }
   }
@@ -81,7 +80,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     width: size.width * 0.7,
                     child: TextField(
                       controller: _phoneNumberController,
-                      decoration: const InputDecoration(hintText: 'phone number'),
+                      decoration:
+                          const InputDecoration(hintText: 'phone number'),
                     ),
                   ),
                 ],

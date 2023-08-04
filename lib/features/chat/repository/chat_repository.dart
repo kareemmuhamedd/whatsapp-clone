@@ -248,4 +248,37 @@ class ChatRepository {
       showSnackBar(context: context, content: e.toString());
     }
   }
+  void sendGIFMessage({
+    required BuildContext context,
+    required String gifUrl,
+    required String receiverUserId,
+    required UserModel senderUserData,
+  }) async {
+    try {
+      DateTime timeSent = DateTime.now();
+      UserModel receiverUserData;
+      var userDataMap =
+      await firestore.collection('users').doc(receiverUserId).get();
+      receiverUserData = UserModel.fromJson(userDataMap.data()!);
+      _saveDataToContactsSubCollection(
+        senderUserData,
+        receiverUserData,
+        'GIF',
+        timeSent,
+        receiverUserId,
+      );
+      var messageId = const Uuid().v1();
+      _saveMessageToMessageSubCollection(
+        receiverUserId: receiverUserId,
+        text: gifUrl,
+        timeSent: timeSent,
+        messageType: MessageEnum.gif,
+        messageId: messageId,
+        receiverUsername: receiverUserData.name,
+        username: senderUserData.name,
+      );
+    } catch (e) {
+      showSnackBar(context: context, content: e.toString());
+    }
+  }
 }

@@ -41,8 +41,10 @@ class AuthRepository {
     return user;
   }
 
-  void signInWithPhone(
-      {required BuildContext context, required String phoneNumber}) async {
+  void signInWithPhone({
+    required BuildContext context,
+    required String phoneNumber,
+  }) async {
     try {
       await auth.verifyPhoneNumber(
         phoneNumber: phoneNumber,
