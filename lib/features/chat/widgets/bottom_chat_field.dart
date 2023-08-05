@@ -3,10 +3,15 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:enough_giphy/src/models/gif.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_sound/flutter_sound.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:whatsapp_clone/common/enums/message_enum.dart';
 import 'package:whatsapp_clone/common/utils/utils.dart';
 import 'package:whatsapp_clone/features/chat/controller/chat_controller.dart';
 import '../../../colors.dart';
+import 'package:record/record.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class BottomChatField extends ConsumerStatefulWidget {
   final String receiverUserId;
@@ -25,6 +30,30 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
   final TextEditingController _messageController = TextEditingController();
   bool isShowEmojiContainer = false;
   FocusNode focusNode = FocusNode();
+  FlutterSoundRecorder? _soundRecorder;
+  Record? _audioRecord;
+  AudioPlayer? _audioPlayer;
+  bool isRecorderInit = false;
+  bool isRecording = false;
+
+  @override
+  void initState() {
+    _audioRecord = Record();
+    _audioPlayer = AudioPlayer();
+    startRecording();
+    super.initState();
+  }
+
+  void startRecording() async {
+    try {
+      final status = await Permission.microphone.request();
+      if(await _audioRecord!.hasPermission()&&status==PermissionStatus.granted){
+        isRecorderInit = true;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
   void sendTextMessage() async {
     if (isShowSendButton) {
@@ -37,6 +66,23 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
       _messageController.clear();
       setState(() {
         isShowSendButton = false;
+      });
+    } else {
+      var tempDir = await getTemporaryDirectory();
+      var path = '${tempDir.path}/flutter_sound.acc';
+      if (!isRecorderInit) {
+        return;
+      }
+      if (isRecording) {
+        await _audioRecord!.stop();
+        sendFileMessage(File(path), MessageEnum.audio);
+      } else {
+        await _audioRecord!.start(
+          path: path
+        );
+      }
+      setState(() {
+        isRecording = !isRecording;
       });
     }
   }
@@ -109,6 +155,9 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
   void dispose() {
     super.dispose();
     _messageController.dispose();
+    _audioPlayer!.dispose();
+    _audioRecord!.dispose();
+    isRecorderInit = false;
   }
 
   @override
@@ -201,7 +250,11 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
                 child: GestureDetector(
                   onTap: sendTextMessage,
                   child: Icon(
-                    isShowSendButton ? Icons.send_rounded : Icons.mic,
+                    isShowSendButton
+                        ? Icons.send_rounded
+                        : isRecording
+                            ? Icons.close
+                            : Icons.mic,
                     color: Colors.white,
                   ),
                 ),
