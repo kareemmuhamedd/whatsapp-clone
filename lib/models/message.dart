@@ -8,6 +8,9 @@ class Message {
   final DateTime timeSent;
   final String messageId;
   final bool isSeen;
+  final String replyMessage;
+  final String replyTo;
+  final MessageEnum replyMessageType;
 
   Message({
     required this.senderId,
@@ -17,6 +20,9 @@ class Message {
     required this.timeSent,
     required this.messageId,
     required this.isSeen,
+    required this.replyMessage,
+    required this.replyTo,
+    required this.replyMessageType,
   });
 
   factory Message.fromJson(Map<String, dynamic> json) {
@@ -28,6 +34,9 @@ class Message {
       timeSent: DateTime.fromMillisecondsSinceEpoch(json["timeSent"]),
       messageId: json["messageId"] ?? '',
       isSeen: json["isSeen"] ?? false,
+      replyMessage: json["replyMessage"] ?? '',
+      replyTo: json["replyTo"] ?? '',
+      replyMessageType: (json["replyMessageType"] as String).toEnum(),
     );
   }
 
@@ -40,6 +49,9 @@ class Message {
       "timeSent": timeSent.millisecondsSinceEpoch,
       "messageId": messageId,
       "isSeen": isSeen,
+      "replyMessage": replyMessage,
+      "replyTo": replyTo,
+      "replyMessageType": replyMessageType.type,
     };
   }
 

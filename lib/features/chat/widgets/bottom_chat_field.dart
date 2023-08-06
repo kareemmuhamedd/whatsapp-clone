@@ -3,15 +3,16 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:enough_giphy/src/models/gif.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:whatsapp_clone/common/enums/message_enum.dart';
+import 'package:whatsapp_clone/common/providers/message_reply_provider.dart';
 import 'package:whatsapp_clone/common/utils/utils.dart';
 import 'package:whatsapp_clone/features/chat/controller/chat_controller.dart';
 import '../../../colors.dart';
 import 'package:record/record.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'message_reply_preview.dart';
 
 class BottomChatField extends ConsumerStatefulWidget {
   final String receiverUserId;
@@ -30,7 +31,6 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
   final TextEditingController _messageController = TextEditingController();
   bool isShowEmojiContainer = false;
   FocusNode focusNode = FocusNode();
-  FlutterSoundRecorder? _soundRecorder;
   Record? _audioRecord;
   AudioPlayer? _audioPlayer;
   bool isRecorderInit = false;
@@ -47,7 +47,8 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
   void startRecording() async {
     try {
       final status = await Permission.microphone.request();
-      if(await _audioRecord!.hasPermission()&&status==PermissionStatus.granted){
+      if (await _audioRecord!.hasPermission() &&
+          status == PermissionStatus.granted) {
         isRecorderInit = true;
       }
     } catch (e) {
@@ -77,9 +78,7 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
         await _audioRecord!.stop();
         sendFileMessage(File(path), MessageEnum.audio);
       } else {
-        await _audioRecord!.start(
-          path: path
-        );
+        await _audioRecord!.start(path: path);
       }
       setState(() {
         isRecording = !isRecording;
@@ -162,8 +161,11 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
 
   @override
   Widget build(BuildContext context) {
+    final MessageReply? messageReply = ref.watch(messageReplyProvider);
+    final bool isShowMessageReply = messageReply != null;
     return Column(
       children: [
+        isShowMessageReply ? const MessageReplyPreview() : const SizedBox(),
         Row(
           children: [
             Expanded(

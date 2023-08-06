@@ -17,6 +17,7 @@ class DisplayTextImageGIF extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
     bool isPlaying = false;
     final AudioPlayer audioPlayer = AudioPlayer();
     return type == MessageEnum.text
@@ -45,9 +46,12 @@ class DisplayTextImageGIF extends StatelessWidget {
                           });
                         }
                       },
-                      child: Icon(isPlaying
-                          ? Icons.stop_circle_rounded
-                          : Icons.play_circle,size: 30,),
+                      child: Icon(
+                        isPlaying
+                            ? Icons.stop_circle_rounded
+                            : Icons.play_circle,
+                        size: 30,
+                      ),
                     );
                   },
                 ),
@@ -58,10 +62,12 @@ class DisplayTextImageGIF extends StatelessWidget {
                   )
                 : type == MessageEnum.gif
                     ? CachedNetworkImage(
+                        width: size.width * 0.5,
                         imageUrl: message,
                         placeholder: (context, url) => const Loader(),
                       )
                     : CachedNetworkImage(
+                        width: size.width * 0.5,
                         imageUrl: message,
                         placeholder: (context, url) => const Loader(),
                       );

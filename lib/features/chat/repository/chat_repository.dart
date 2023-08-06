@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:whatsapp_clone/common/enums/message_enum.dart';
+import 'package:whatsapp_clone/common/providers/message_reply_provider.dart';
 import 'package:whatsapp_clone/common/repositories/common_firebase_storage_repository.dart';
 import 'package:whatsapp_clone/common/utils/utils.dart';
 import 'package:whatsapp_clone/info.dart';
@@ -122,6 +123,9 @@ class ChatRepository {
     required String username,
     required String receiverUsername,
     required MessageEnum messageType,
+    required MessageReply? messageReply,
+    required String senderUserName,
+    required String receiverUserName,
   }) async {
     final message = Message(
       senderId: auth.currentUser!.uid,
@@ -131,6 +135,14 @@ class ChatRepository {
       timeSent: timeSent,
       messageId: messageId,
       isSeen: false,
+      replyMessage: messageReply == null ? '' : messageReply.message,
+      replyTo: messageReply == null
+          ? ''
+          : messageReply.isMe
+              ? senderUserName
+              : receiverUserName,
+      replyMessageType:
+          messageReply == null ? MessageEnum.text : messageReply.messageEnum,
     );
     await firestore
         .collection('users')
@@ -160,6 +172,7 @@ class ChatRepository {
     required String text,
     required String receiverUserId,
     required UserModel senderUserData,
+    required MessageReply? messageReply,
   }) async {
     try {
       DateTime timeSent = DateTime.now();
@@ -183,6 +196,9 @@ class ChatRepository {
         messageId: messageId,
         receiverUsername: receiverUserData.name,
         username: senderUserData.name,
+        messageReply: messageReply,
+        receiverUserName: receiverUserData.name,
+        senderUserName: senderUserData.name,
       );
     } catch (e) {
       showSnackBar(context: context, content: e.toString());
@@ -196,6 +212,7 @@ class ChatRepository {
     required UserModel senderUserData,
     required ProviderRef ref,
     required MessageEnum messageEnum,
+    required MessageReply? messageReply,
   }) async {
     try {
       DateTime timeSent = DateTime.now();
@@ -243,22 +260,27 @@ class ChatRepository {
         username: senderUserData.name,
         receiverUsername: receiverUserData.name,
         messageType: messageEnum,
+        messageReply: messageReply,
+        receiverUserName: receiverUserData.name,
+        senderUserName: senderUserData.name,
       );
     } catch (e) {
       showSnackBar(context: context, content: e.toString());
     }
   }
+
   void sendGIFMessage({
     required BuildContext context,
     required String gifUrl,
     required String receiverUserId,
     required UserModel senderUserData,
+    required MessageReply? messageReply,
   }) async {
     try {
       DateTime timeSent = DateTime.now();
       UserModel receiverUserData;
       var userDataMap =
-      await firestore.collection('users').doc(receiverUserId).get();
+          await firestore.collection('users').doc(receiverUserId).get();
       receiverUserData = UserModel.fromJson(userDataMap.data()!);
       _saveDataToContactsSubCollection(
         senderUserData,
@@ -276,6 +298,9 @@ class ChatRepository {
         messageId: messageId,
         receiverUsername: receiverUserData.name,
         username: senderUserData.name,
+        messageReply: messageReply,
+        receiverUserName: receiverUserData.name,
+        senderUserName: senderUserData.name,
       );
     } catch (e) {
       showSnackBar(context: context, content: e.toString());
