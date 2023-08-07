@@ -9,7 +9,6 @@ import 'package:whatsapp_clone/common/enums/message_enum.dart';
 import 'package:whatsapp_clone/common/providers/message_reply_provider.dart';
 import 'package:whatsapp_clone/common/repositories/common_firebase_storage_repository.dart';
 import 'package:whatsapp_clone/common/utils/utils.dart';
-import 'package:whatsapp_clone/info.dart';
 import 'package:whatsapp_clone/models/chat_contact.dart';
 import 'package:whatsapp_clone/models/message.dart';
 import 'package:whatsapp_clone/models/user_model.dart';
@@ -64,7 +63,7 @@ class ChatRepository {
         .collection('chats')
         .doc(receiverUserId)
         .collection('messages')
-        .orderBy('timeSent')
+        .orderBy('timeSent', descending: true)
         .snapshots()
         .map((event) {
       List<Message> messages = [];

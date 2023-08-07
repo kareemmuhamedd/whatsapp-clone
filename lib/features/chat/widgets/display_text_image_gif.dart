@@ -29,7 +29,12 @@ class DisplayTextImageGIF extends StatelessWidget {
           )
         : type == MessageEnum.audio
             ? Padding(
-                padding: const EdgeInsets.only(left: 120, right: 60),
+                padding: const EdgeInsets.only(
+                  left: 12,
+                  right: 190,
+                  top: 12,
+                  bottom: 12,
+                ),
                 child: StatefulBuilder(
                   builder: (context, setState) {
                     return GestureDetector(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:swipe_to/swipe_to.dart';
 import 'package:whatsapp_clone/common/enums/message_enum.dart';
 import 'package:whatsapp_clone/features/chat/widgets/display_text_image_gif.dart';
+import 'package:whatsapp_clone/models/user_model.dart';
 import '../../../colors.dart';
 
 class MyMessageCard extends StatelessWidget {
@@ -42,7 +43,7 @@ class MyMessageCard extends StatelessWidget {
                 padding: type == MessageEnum.text
                     ? EdgeInsets.only(
                         left: 7,
-                        right: message.length < 50 ? 70 : 7,
+                        right: message.length < 50 ? 90 : 7,
                         top: 5,
                         bottom: message.length < 50 ? 10 : 20,
                       )

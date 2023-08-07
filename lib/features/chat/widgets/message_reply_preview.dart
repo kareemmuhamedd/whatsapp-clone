@@ -25,7 +25,7 @@ class MessageReplyPreview extends ConsumerWidget {
             topLeft: Radius.circular(12),
           ),
         ),
-        width: 350,
+        width: MediaQuery.of(context).size.width * 0.85,
         padding: const EdgeInsets.all(8),
         child: Column(
           children: [
@@ -58,7 +58,8 @@ class MessageReplyPreview extends ConsumerWidget {
                 color: backgroundColor.withOpacity(0.5),
                 borderRadius: BorderRadius.circular(15),
               ),
-              child: messageReply.messageEnum == MessageEnum.image
+              child: messageReply.messageEnum == MessageEnum.image ||
+                      messageReply.messageEnum == MessageEnum.video
                   ? SizedBox(
                       width: 80,
                       height: 100,

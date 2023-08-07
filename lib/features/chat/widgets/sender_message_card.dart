@@ -48,7 +48,7 @@ class SenderMessageCard extends StatelessWidget {
                   padding: type == MessageEnum.text
                       ? EdgeInsets.only(
                           left: 7,
-                          right: message.length < 50 ? 70 : 7,
+                          right: message.length < 50 ? 90 : 7,
                           top: 5,
                           bottom: message.length < 50 ? 10 : 20,
                         )

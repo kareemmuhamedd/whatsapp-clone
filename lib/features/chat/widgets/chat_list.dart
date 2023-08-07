@@ -6,9 +6,7 @@ import 'package:whatsapp_clone/common/providers/message_reply_provider.dart';
 import 'package:whatsapp_clone/common/widgets/loader.dart';
 import 'package:whatsapp_clone/models/message.dart';
 import 'package:whatsapp_clone/features/chat/widgets/sender_message_card.dart';
-
 import '../../../common/enums/message_enum.dart';
-import '../../../info.dart';
 import 'my_message_card.dart';
 import '../controller/chat_controller.dart';
 
@@ -54,14 +52,17 @@ class _ChatListState extends ConsumerState<ChatList> {
           return const Loader();
         }
         SchedulerBinding.instance.addPostFrameCallback((_) {
-          messageController.jumpTo(messageController.position.maxScrollExtent);
+          messageController.jumpTo(messageController.position.minScrollExtent);
         });
         return ListView.builder(
+          reverse: true,
           controller: messageController,
           itemCount: snapshot.data!.length,
           itemBuilder: (context, index) {
             final messageData = snapshot.data![index];
-            String timeSent = DateFormat.Hm().format(messageData.timeSent);
+            String timeSent = messageData.timeSent != null
+                ? DateFormat.jm().format(messageData.timeSent!.toDate())
+                : '';
             if (messageData.senderId != widget.receiverUserId) {
               return MyMessageCard(
                 message: messageData.text,

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:whatsapp_clone/common/enums/message_enum.dart';
 
 class Message {
@@ -5,7 +6,7 @@ class Message {
   final String receiverId;
   final String text;
   final MessageEnum type;
-  final DateTime timeSent;
+  final dynamic timeSent;
   final String messageId;
   final bool isSeen;
   final String replyMessage;
@@ -31,7 +32,7 @@ class Message {
       receiverId: json["receiverId"] ?? '',
       text: json["text"] ?? '',
       type: (json["type"] as String).toEnum(),
-      timeSent: DateTime.fromMillisecondsSinceEpoch(json["timeSent"]),
+      timeSent: (json["timeSent"]),
       messageId: json["messageId"] ?? '',
       isSeen: json["isSeen"] ?? false,
       replyMessage: json["replyMessage"] ?? '',
@@ -46,7 +47,7 @@ class Message {
       "receiverId": receiverId,
       "text": text,
       "type": type.type,
-      "timeSent": timeSent.millisecondsSinceEpoch,
+      "timeSent": FieldValue.serverTimestamp(),
       "messageId": messageId,
       "isSeen": isSeen,
       "replyMessage": replyMessage,
