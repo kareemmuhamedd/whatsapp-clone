@@ -27,6 +27,13 @@ class ChatRepository {
     required this.auth,
   });
 
+  Future<UserModel> getCurrentUserData() async {
+    var data =
+        await firestore.collection('users').doc(auth.currentUser!.uid).get();
+    UserModel userData = UserModel.fromJson(data.data()!);
+    return userData;
+  }
+
   Stream<List<ChatContact>> getChatContact() {
     return firestore
         .collection('users')

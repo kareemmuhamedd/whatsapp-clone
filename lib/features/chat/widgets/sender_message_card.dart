@@ -12,6 +12,7 @@ class SenderMessageCard extends StatelessWidget {
   final String userName;
   final String repliedText;
   final MessageEnum repliedMessageType;
+  final String profilePic;
 
   const SenderMessageCard({
     Key? key,
@@ -22,27 +23,29 @@ class SenderMessageCard extends StatelessWidget {
     required this.userName,
     required this.repliedText,
     required this.repliedMessageType,
+    required this.profilePic,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final bool isReplying = repliedText.isNotEmpty;
-    final size=MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
     return SwipeTo(
       onRightSwipe: onRightSwipe,
       child: Align(
         alignment: Alignment.centerLeft,
         child: ConstrainedBox(
           constraints: BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width - 45,
+            maxWidth: size.width - 45,
           ),
           child: Card(
             elevation: 1,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             color: senderMessageColor,
-            margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+            margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
             child: Stack(
+              clipBehavior: Clip.none,
               children: [
                 Padding(
                   padding: type == MessageEnum.text
@@ -88,6 +91,13 @@ class SenderMessageCard extends StatelessWidget {
                     ],
                   ),
                 ),
+                Positioned(
+                    top: -19,
+                    left: -20,
+                    child: CircleAvatar(
+                      backgroundImage: NetworkImage(profilePic),
+                      radius: 14,
+                    )),
                 Positioned(
                   bottom: 2,
                   right: 10,

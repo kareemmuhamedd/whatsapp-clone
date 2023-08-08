@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:whatsapp_clone/common/enums/message_enum.dart';
 import 'package:whatsapp_clone/features/auth/controller/auth_controller.dart';
 import 'package:whatsapp_clone/features/chat/repository/chat_repository.dart';
+import 'package:whatsapp_clone/models/user_model.dart';
 
 import '../../../common/providers/message_reply_provider.dart';
 import '../../../models/chat_contact.dart';
@@ -96,5 +97,10 @@ class ChatController {
         ref.read(messageReplyProvider.notifier).update((state) => null);
       },
     );
+  }
+
+  Future<UserModel> getCurrentUserData() async {
+    UserModel userData = await chatRepository.getCurrentUserData();
+    return userData;
   }
 }

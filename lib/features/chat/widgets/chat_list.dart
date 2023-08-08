@@ -6,14 +6,20 @@ import 'package:whatsapp_clone/common/providers/message_reply_provider.dart';
 import 'package:whatsapp_clone/common/widgets/loader.dart';
 import 'package:whatsapp_clone/models/message.dart';
 import 'package:whatsapp_clone/features/chat/widgets/sender_message_card.dart';
+import 'package:whatsapp_clone/models/user_model.dart';
 import '../../../common/enums/message_enum.dart';
 import 'my_message_card.dart';
 import '../controller/chat_controller.dart';
 
 class ChatList extends ConsumerStatefulWidget {
   final String receiverUserId;
+  final String profilePic;
 
-  const ChatList({Key? key, required this.receiverUserId}) : super(key: key);
+  const ChatList({
+    Key? key,
+    required this.receiverUserId,
+    required this.profilePic,
+  }) : super(key: key);
 
   @override
   ConsumerState<ChatList> createState() => _ChatListState();
@@ -34,6 +40,10 @@ class _ChatListState extends ConsumerState<ChatList> {
             messageEnum: messageEnum,
           ),
         );
+  }
+
+  Future<void> getCurrentUserData() async {
+    ref.read(chatControllerProvider).getCurrentUserData();
   }
 
   @override
@@ -64,36 +74,43 @@ class _ChatListState extends ConsumerState<ChatList> {
                 ? DateFormat.jm().format(messageData.timeSent!.toDate())
                 : '';
             if (messageData.senderId != widget.receiverUserId) {
-              return MyMessageCard(
+              return Padding(
+                padding: const EdgeInsets.only(top: 15),
+                child: MyMessageCard(
+                  message: messageData.text,
+                  date: timeSent,
+                  type: messageData.type,
+                  repliedText: messageData.replyMessage,
+                  userName: messageData.replyTo,
+                  repliedMessageType: messageData.replyMessageType,
+                  onLeftSwipe: () {
+                    onMessageSwipe(
+                      message: messageData.text,
+                      isMe: true,
+                      messageEnum: messageData.type,
+                    );
+                  },
+                ),
+              );
+            }
+            return Padding(
+              padding: const EdgeInsets.only(top: 15, left: 10),
+              child: SenderMessageCard(
                 message: messageData.text,
                 date: timeSent,
                 type: messageData.type,
                 repliedText: messageData.replyMessage,
                 userName: messageData.replyTo,
                 repliedMessageType: messageData.replyMessageType,
-                onLeftSwipe: () {
+                onRightSwipe: () {
                   onMessageSwipe(
                     message: messageData.text,
-                    isMe: true,
+                    isMe: false,
                     messageEnum: messageData.type,
                   );
                 },
-              );
-            }
-            return SenderMessageCard(
-              message: messageData.text,
-              date: timeSent,
-              type: messageData.type,
-              repliedText: messageData.replyMessage,
-              userName: messageData.replyTo,
-              repliedMessageType: messageData.replyMessageType,
-              onRightSwipe: () {
-                onMessageSwipe(
-                  message: messageData.text,
-                  isMe: false,
-                  messageEnum: messageData.type,
-                );
-              },
+                profilePic: widget.profilePic,
+              ),
             );
           },
         );
