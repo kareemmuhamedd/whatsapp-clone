@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:swipe_to/swipe_to.dart';
 import 'package:whatsapp_clone/common/enums/message_enum.dart';
+import 'package:whatsapp_clone/features/chat/controller/chat_controller.dart';
 import 'package:whatsapp_clone/features/chat/widgets/display_text_image_gif.dart';
 import '../../../colors.dart';
 
@@ -26,9 +27,9 @@ class MyMessageCard extends ConsumerWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context,WidgetRef ref) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final bool isReplying = repliedText.isNotEmpty;
-    final size=MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
     return SwipeTo(
       onLeftSwipe: onLeftSwipe,
       child: Align(
@@ -39,7 +40,8 @@ class MyMessageCard extends ConsumerWidget {
           ),
           child: Card(
             elevation: 1,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             color: messageColor,
             margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
             child: Stack(
@@ -89,11 +91,21 @@ class MyMessageCard extends ConsumerWidget {
                     ],
                   ),
                 ),
-                const Positioned(
-                  top: -15,
-                  right: -20,
-                  child: CircleAvatar(backgroundColor: Colors.white,radius: 14,)
-                ),
+                FutureBuilder(
+                    future:
+                        ref.watch(chatControllerProvider).getCurrentUserData(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator(); // Show a loading indicator
+                      }
+                      return  Positioned(
+                          top: -15,
+                          right: -20,
+                          child: CircleAvatar(
+                            backgroundImage: NetworkImage(snapshot.data!.profilePic),
+                            radius: 14,
+                          ));
+                    }),
                 Positioned(
                   bottom: 4,
                   right: 5,
@@ -117,7 +129,6 @@ class MyMessageCard extends ConsumerWidget {
                     ],
                   ),
                 ),
-
               ],
             ),
           ),
