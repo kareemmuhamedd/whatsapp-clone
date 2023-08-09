@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,7 +7,6 @@ import 'package:whatsapp_clone/common/providers/message_reply_provider.dart';
 import 'package:whatsapp_clone/common/widgets/loader.dart';
 import 'package:whatsapp_clone/models/message.dart';
 import 'package:whatsapp_clone/features/chat/widgets/sender_message_card.dart';
-import 'package:whatsapp_clone/models/user_model.dart';
 import '../../../common/enums/message_enum.dart';
 import 'my_message_card.dart';
 import '../controller/chat_controller.dart';
@@ -73,6 +73,15 @@ class _ChatListState extends ConsumerState<ChatList> {
             String timeSent = messageData.timeSent != null
                 ? DateFormat.jm().format(messageData.timeSent!.toDate())
                 : '';
+            if (!messageData.isSeen &&
+                messageData.receiverId ==
+                    FirebaseAuth.instance.currentUser!.uid) {
+              ref.read(chatControllerProvider).setMessageIsSeen(
+                    context,
+                    widget.receiverUserId,
+                    messageData.messageId,
+                  );
+            }
             if (messageData.senderId != widget.receiverUserId) {
               return Padding(
                 padding: const EdgeInsets.only(top: 15),
@@ -90,11 +99,14 @@ class _ChatListState extends ConsumerState<ChatList> {
                       messageEnum: messageData.type,
                     );
                   },
+                  isSeen: messageData.isSeen,
                 ),
               );
             }
             return Padding(
-              padding: const EdgeInsets.only(top: 15, ),
+              padding: const EdgeInsets.only(
+                top: 15,
+              ),
               child: SenderMessageCard(
                 message: messageData.text,
                 date: timeSent,

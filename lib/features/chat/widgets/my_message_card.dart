@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:swipe_to/swipe_to.dart';
@@ -14,6 +15,7 @@ class MyMessageCard extends ConsumerWidget {
   final String userName;
   final String repliedText;
   final MessageEnum repliedMessageType;
+  final bool isSeen;
 
   const MyMessageCard({
     Key? key,
@@ -24,6 +26,7 @@ class MyMessageCard extends ConsumerWidget {
     required this.userName,
     required this.repliedText,
     required this.repliedMessageType,
+    required this.isSeen,
   }) : super(key: key);
 
   @override
@@ -97,14 +100,17 @@ class MyMessageCard extends ConsumerWidget {
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const CircularProgressIndicator(); // Show a loading indicator
+                      } else {
+                        return Positioned(
+                            top: -15,
+                            right: -20,
+                            child: CircleAvatar(
+                              backgroundImage: NetworkImage(
+                                snapshot.data!.profilePic,
+                              ),
+                              radius: 14,
+                            ));
                       }
-                      return  Positioned(
-                          top: -15,
-                          right: -20,
-                          child: CircleAvatar(
-                            backgroundImage: NetworkImage(snapshot.data!.profilePic),
-                            radius: 14,
-                          ));
                     }),
                 Positioned(
                   bottom: 4,
@@ -121,10 +127,10 @@ class MyMessageCard extends ConsumerWidget {
                       const SizedBox(
                         width: 5,
                       ),
-                      const Icon(
-                        Icons.done_all,
+                      Icon(
+                        isSeen ? Icons.done_all : Icons.done,
                         size: 20,
-                        color: Colors.white60,
+                        color: isSeen ? Colors.blue : Colors.white60,
                       ),
                     ],
                   ),

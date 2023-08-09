@@ -103,4 +103,16 @@ class ChatController {
     UserModel userData = await chatRepository.getCurrentUserData();
     return userData;
   }
+
+  void setMessageIsSeen(
+    BuildContext context,
+    String receiverUserId,
+    String messageId,
+  ) async {
+    chatRepository.setMessageIsSeen(
+      context,
+      receiverUserId,
+      messageId,
+    );
+  }
 }
