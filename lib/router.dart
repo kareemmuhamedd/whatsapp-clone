@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:whatsapp_clone/common/widgets/error.dart';
 import 'package:whatsapp_clone/features/auth/screens/otp_screen.dart';
@@ -7,6 +7,7 @@ import 'package:whatsapp_clone/features/select_contacts/screens/select_contact_s
 import 'package:whatsapp_clone/features/chat/screens/mobile_chat_screen.dart';
 
 import 'features/auth/screens/login_screen.dart';
+import 'features/status/screens/confirm_status_screen.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
@@ -36,6 +37,11 @@ Route<dynamic> generateRoute(RouteSettings settings) {
                 uid: uid,
                 profilePic: profilePic,
               ));
+    case ConfirmStatusScreen.routeName:
+      final File file = settings.arguments as File;
+      return MaterialPageRoute(
+        builder: (context) => ConfirmStatusScreen(file: file),
+      );
     default:
       return MaterialPageRoute(
         builder: (context) => const Scaffold(
