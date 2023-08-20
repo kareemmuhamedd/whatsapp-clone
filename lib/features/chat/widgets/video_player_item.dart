@@ -16,7 +16,7 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
   bool isEnd = false;
 
   @override
-  void initState() {
+   void initState() {
     super.initState();
     videoPlayerController = CachedVideoPlayerController.network(widget.videoUrl)
       ..initialize().then((value) {

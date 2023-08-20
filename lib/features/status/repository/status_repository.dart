@@ -61,14 +61,13 @@ class StatusRepository {
             )
             .get();
         if (userDataFromFirebase.docs.isNotEmpty) {
-          UserModel userData = UserModel.fromJson(
-            /// ******* WHY I TYPE docs[0] ??? *******
-            /// i put 0 here because i will make sure if the phone number
-            /// is on the firebase or not
-            /// so if it was exist i will get it, and it will be one number of course
-            /// so i will get a list of query snapshot that have only one data so i put [0]
-            userDataFromFirebase.docs[0].data(),
-          );
+          /// ******* WHY I TYPE docs[0] ??? *******
+          /// i put 0 here because i will make sure if the phone number
+          /// is on the firebase or not
+          /// so if it was exist i will get it, and it will be one number of course
+          /// so i will get a list of query snapshot that have only one data so i put [0]
+          UserModel userData =
+              UserModel.fromJson(userDataFromFirebase.docs[0].data());
           uidWhoCanSee.add(userData.uid);
         }
       }
@@ -95,23 +94,67 @@ class StatusRepository {
         );
         return;
       } else {
-        /// this mean that i don't have any status yet and i will add the fires story
+        /// this mean that i don't have any status yet and i will add the first story
         statusImageUrlsList = [imageUrl];
-        Status status = Status(
-          uid: uid,
-          username: username,
-          phoneNumber: phoneNumber,
-          photoUrl: statusImageUrlsList,
-          createdAt: DateTime.now(),
-          profilePic: profilePic,
-          statusId: statusId,
-          whoCanSee: uidWhoCanSee,
-        );
-        await firestore.collection('status').doc(statusId).set(status.toJson());
       }
-
+      Status status = Status(
+        uid: uid,
+        username: username,
+        phoneNumber: phoneNumber,
+        photoUrl: statusImageUrlsList,
+        createdAt: DateTime.now(),
+        profilePic: profilePic,
+        statusId: statusId,
+        whoCanSee: uidWhoCanSee,
+      );
+      await firestore.collection('status').doc(statusId).set(status.toJson());
     } catch (e) {
+      print(e);
       showSnackBar(context: context, content: e.toString());
     }
   }
+
+  Future<List<Status>> getStatus(BuildContext context) async {
+    List<Status> statusData = [];
+    try {
+      List<Contact> contacts = [];
+      if (await FlutterContacts.requestPermission()) {
+        contacts = await FlutterContacts.getContacts(withProperties: true);
+      }
+
+      String phoneNumber = auth.currentUser!.phoneNumber!;
+      Contact myContact = Contact(
+        displayName: 'Your Name', // Replace with your name
+        phones: [Phone(phoneNumber)],
+      );
+      contacts.add(myContact);
+
+      for (int i = 0; i < contacts.length; i++) {
+        var statusSnapshot = await firestore
+            .collection('status')
+            .where(
+              'phoneNumber',
+              isEqualTo: contacts[i].phones[0].number.replaceAll(' ', ''),
+            )
+            .where('createdAt',
+                isGreaterThan: DateTime.now()
+                    .subtract(const Duration(hours: 24))
+                    .millisecondsSinceEpoch)
+            .get();
+
+        for (var tempData in statusSnapshot.docs) {
+          Status tempStatus = Status.fromJson(tempData.data());
+          if (tempStatus.whoCanSee.contains(auth.currentUser!.uid)) {
+            statusData.add(tempStatus);
+          }
+        }
+      }
+    } catch (e) {
+      print(e);
+      showSnackBar(context: context, content: e.toString());
+    }
+    return statusData;
+  }
+
+
 }

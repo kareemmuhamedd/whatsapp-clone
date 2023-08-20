@@ -61,10 +61,7 @@ class DisplayTextImageGIF extends StatelessWidget {
                   },
                 ),
               )
-            : type == MessageEnum.video
-                ? VideoPlayerItem(
-                    videoUrl: message,
-                  )
+
                 : type == MessageEnum.gif
                     ? CachedNetworkImage(
                         width: size.width * 0.5,
