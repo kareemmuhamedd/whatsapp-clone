@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:whatsapp_clone/common/utils/utils.dart';
 import 'package:whatsapp_clone/features/auth/controller/auth_controller.dart';
+import 'package:whatsapp_clone/features/group/screens/create_group_screen.dart';
 import 'package:whatsapp_clone/features/select_contacts/screens/select_contact_screen.dart';
 import 'package:whatsapp_clone/features/status/screens/confirm_status_screen.dart';
 import 'package:whatsapp_clone/features/status/screens/status_contacts_screen.dart';
@@ -34,7 +35,7 @@ class _MobileLayoutScreenState extends ConsumerState<MobileLayoutScreen>
     WidgetsBinding.instance.removeObserver(this);
   }
 
-  // this function is used to check if the app is opened or not
+  // this function is used to check if the app is opened or not (-online/offline feature-)
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
@@ -72,10 +73,24 @@ class _MobileLayoutScreenState extends ConsumerState<MobileLayoutScreen>
               icon: const Icon(Icons.search, color: Colors.grey),
               onPressed: () {},
             ),
-            IconButton(
-              icon: const Icon(Icons.more_vert, color: Colors.grey),
-              onPressed: () {},
-            ),
+            PopupMenuButton(
+              icon: const Icon(
+                Icons.more_vert,
+                color: Colors.grey,
+              ),
+              itemBuilder: (context) {
+                return [
+                  PopupMenuItem(
+                      child: const Text('Create group'),
+                      onTap: () => Future(
+                            () => Navigator.pushNamed(
+                              context,
+                              CreateGroupScreen.routeName,
+                            ),
+                          )),
+                ];
+              },
+            )
           ],
           bottom: TabBar(
             controller: _tabController,

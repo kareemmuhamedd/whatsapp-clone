@@ -37,10 +37,7 @@ class SelectContactScreen extends ConsumerWidget {
       body: ref.watch(getContactsProvider).when(
           data: (contactList) => ListView.builder(
               itemCount: contactList.length,
-              itemBuilder: (
-                context,
-                index,
-              ) {
+              itemBuilder: (context, index) {
                 final contact = contactList[index];
                 return InkWell(
                   onTap: () => selectContact(contact, context, ref),
